@@ -11,6 +11,7 @@
 #include "shaderprogram.h"
 #include "linear_alg.h"
 #include "camera.h"
+#include "ray.h"
 #include "global_defines.h"
 #define WINDOW_TITLE_PREFIX "Chapter 1"
 
@@ -31,9 +32,11 @@ void Initialize(int, char*[]);
 void InitWindow(int, char*[]);
 void ResizeFunction(int, int);
 void RenderFunction(void);
+void MouseFunction(int, int, int, int);
 
 ShaderProgram prog_lambert;
 Drawable geom_tri;
+Drawable geom_sphere;
 Camera camera;
 GLuint vao;
 
@@ -48,8 +51,10 @@ int main(int argc, char* argv[])
 #endif
 
     geom_tri = init_Drawable();
+    geom_sphere = init_Drawable();
     create_triangle_vbo(&geom_tri);
-    camera = init_Camera(init_vec4(0,0,2,1), init_vec4(0,0,0,1), 45.f * TO_RADIANS,
+    create_sphere_vbo(&geom_sphere);
+    camera = init_Camera(init_vec4(0,0,5,1), init_vec4(0,0,0,1), 45.f * TO_RADIANS,
                           0.001f, 1000.f, CurrentWidth / (float)CurrentHeight);
     mat4 viewProj = getViewProj(&camera);
     setUniformMat4(&prog_lambert, prog_lambert.unifViewProj, &viewProj);
@@ -87,6 +92,8 @@ void Initialize(int argc, char* argv[]) {
     );
 
     glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+    glEnable(GL_DEPTH_TEST);
 }
 
 void InitWindow(int argc, char* argv[])
@@ -120,25 +127,39 @@ void InitWindow(int argc, char* argv[])
 
     glutReshapeFunc(ResizeFunction);
     glutDisplayFunc(RenderFunction);
+    glutMouseFunc(MouseFunction);
 }
 
-void ResizeFunction(int Width, int Height)
-{
+void ResizeFunction(int Width, int Height) {
     CurrentWidth = Width;
     CurrentHeight = Height;
     glViewport(0, 0, CurrentWidth, CurrentHeight);
 }
 
-void RenderFunction(void)
-{
+void RenderFunction(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     camera.eye = mult_mat4_vec4(rotate(0.25 * TO_RADIANS, 0, 1, 0), camera.eye);
     mat4 viewProj = getViewProj(&camera);
     setUniformMat4(&prog_lambert, prog_lambert.unifViewProj, &viewProj);
 
-    draw(&prog_lambert, &geom_tri);
-
+//    draw(&prog_lambert, &geom_tri);
+    draw(&prog_lambert, &geom_sphere);
     glutSwapBuffers();
     glutPostRedisplay();
+}
+
+// state is GLUT_UP or GLUT_DOWN
+void MouseFunction(int button, int state, int x, int y) {
+    float ndc_x = x / (float)CurrentWidth * 2.f - 1.f;
+    float ndc_y = 1.f - y / (float)CurrentHeight * 2.f;
+    if(button == GLUT_LEFT_BUTTON) {
+        Ray r = raycast(&camera, ndc_x, ndc_y);
+    }
+    else if(button == GLUT_RIGHT_BUTTON) {
+        ;
+    }
+    else if(button == GLUT_MIDDLE_BUTTON) {
+        ;
+    }
 }

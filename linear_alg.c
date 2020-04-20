@@ -16,6 +16,15 @@ float dot(vec4 a, vec4 b) {
     return sum;
 }
 
+
+vec4 sum(vec4 a, vec4 b) {
+    vec4 v = {a.data[0] + b.data[0],
+              a.data[1] + b.data[1],
+              a.data[2] + b.data[2],
+              a.data[3] + b.data[3]};
+    return v;
+}
+
 vec4 diff(vec4 a, vec4 b) {
     vec4 v = {a.data[0] - b.data[0],
             a.data[1] - b.data[1],
@@ -44,6 +53,12 @@ float length(vec4 v) {
                         v.data[1] * v.data[1] +
                         v.data[2] * v.data[2] +
                         v.data[3] * v.data[3]);
+}
+
+
+vec4 mult_vec4_flt(vec4 v, float c) {
+    vec4 result = {v.data[0] * c, v.data[1] * c, v.data[2] * c, v.data[3] * c};
+    return result;
 }
 
 mat4 identity() {
@@ -93,7 +108,7 @@ mat4 viewMat(vec4 R, vec4 U, vec4 F, vec4 eye) {
 
 mat4 projMat(float fovy, float nc, float fc, float aspect) {
     mat4 m = identity();
-    float S = tan(fovy / 2.f);
+    float S = 1.0 / tan(fovy / 2.f);
     m.data[0].data[0] = S / aspect;
     m.data[1].data[1] = S;
     m.data[2].data[2] = fc / (fc - nc);

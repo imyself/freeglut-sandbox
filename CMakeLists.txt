@@ -14,4 +14,5 @@ add_executable(opengl_test main.c
                shaderprogram.h shaderprogram.c
                drawable.h drawable.c
                linear_alg.h linear_alg.c
-        camera.h camera.c)
+        camera.h camera.c
+        ray.c ray.h)

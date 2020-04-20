@@ -6,10 +6,12 @@ typedef struct vec4_t {
 
 vec4 init_vec4(float x, float y, float z, float w);
 float dot(vec4 a, vec4 b);
+vec4 sum(vec4 a, vec4 b);
 vec4 diff(vec4 a, vec4 b);
 vec4 normalize(vec4 v);
 vec4 cross(vec4 a, vec4 b);
 float length(vec4 v);
+vec4 mult_vec4_flt(vec4 v, float c);
 
 typedef struct mat4_t {
     vec4 data[4];
